@@ -32,11 +32,11 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
 
   // Root Endpoint
   // Displays a simple message to the user
-  app.get("/", async (req, res) => {
+  app.get("/", async (req: express.Request, res: express.Response) => {
     res.send("try GET /filteredimage?image_url={{}}");
   });
 
-  app.get("/filteredimage", (req, res) => {
+  app.get("/filteredimage", (req: express.Request, res: express.Response) => {
     console.log(req.query, "xxx");
 
     if (!req.query.image_url) {
@@ -48,6 +48,7 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
       .then(
         (value) => {
           image = value;
+          res.status(200);
           res.sendFile(value);
           res.on("finish", () => {
             deleteLocalFiles([image]);
