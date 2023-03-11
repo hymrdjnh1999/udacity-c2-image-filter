@@ -11,9 +11,9 @@ import Jimp from 'jimp'
 //    an absolute path to a filtered image locally saved file
 export async function filterImageFromURL(inputURL: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
-    axios.get(inputURL, { responseType: 'arraybuffer' }).then(({ data }) => {
+    axios.get(inputURL, { responseType: 'arraybuffer' }).then((result: { data: string; }) => {
       const outpath = "\\tmp\\filtered." + Math.floor(Math.random() * 2000) + ".jpg";
-      Jimp.read(data).then((photo) => {
+      Jimp.read(result.data).then((photo) => {
         photo.resize(256, 256) // resize
           .quality(60) // set JPEG quality
           .greyscale() // set greyscale
