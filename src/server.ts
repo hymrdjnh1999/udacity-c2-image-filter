@@ -48,7 +48,7 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
           console.log(value, "xx");
           res.sendFile(value);
           res.on("finish", () => {
-            // deleteLocalFiles([value]);
+            deleteLocalFiles([value]);
           });
         },
         (error) => {
