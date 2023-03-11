@@ -37,33 +37,29 @@ import { filterImageFromURL, deleteLocalFiles } from "./util/util";
   });
 
   app.get("/filteredimage", (req: express.Request, res: express.Response) => {
-    console.log(req.query, "xxx");
-
     if (!req.query.image_url) {
       res.send("try fill image url to query image_url");
       return;
     }
-    let image = "";
     filterImageFromURL(req.query.image_url as string)
       .then(
         (value) => {
-          image = value;
           res.status(200);
+          console.log(value, "xx");
           res.sendFile(value);
           res.on("finish", () => {
-            deleteLocalFiles([image]);
+            // deleteLocalFiles([value]);
           });
         },
         (error) => {
-          res.status(400);
-          return res.send(error.message);
+          res.status(404);
+          return res.send("Image not found");
         }
       )
       .catch((error) => {
-        res.status(400);
-        return res.send(error.message);
+        res.status(404);
+        return res.send("Image not found");
       })
-      .finally(() => {});
   });
 
   // Start the Server

@@ -1,5 +1,6 @@
+import axios from "axios";
 import fs from "fs";
-import Jimp = require("jimp");
+import Jimp from 'jimp'
 
 // filterImageFromURL
 // helper function to download, filter, and save the filtered image locally
@@ -10,20 +11,17 @@ import Jimp = require("jimp");
 //    an absolute path to a filtered image locally saved file
 export async function filterImageFromURL(inputURL: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
-    try {
-      const photo = await Jimp.read(inputURL);
-      const outpath =
-        "/tmp/filtered." + Math.floor(Math.random() * 2000) + ".jpg";
-      await photo
-        .resize(256, 256) // resize
-        .quality(60) // set JPEG quality
-        .greyscale() // set greyscale
-        .write(__dirname + outpath, (img) => {
-          resolve(__dirname + outpath);
-        });
-    } catch (error) {
-      reject(error);
-    }
+    axios.get(inputURL, { responseType: 'arraybuffer' }).then(({ data }) => {
+      const outpath = "\\tmp\\filtered." + Math.floor(Math.random() * 2000) + ".jpg";
+      Jimp.read(data).then((photo) => {
+        photo.resize(256, 256) // resize
+          .quality(60) // set JPEG quality
+          .greyscale() // set greyscale
+          .write(__dirname + outpath, (img) => {
+            resolve(__dirname + outpath);
+          });
+      }).catch(e => { reject(e) })
+    }).catch(e => { reject(e) })
   });
 }
 
@@ -33,7 +31,11 @@ export async function filterImageFromURL(inputURL: string): Promise<string> {
 // INPUTS
 //    files: Array<string> an array of absolute paths to files
 export async function deleteLocalFiles(files: Array<string>) {
-  for (let file of files) {
-    fs.unlinkSync(file);
+  try {
+    for (let file of files) {
+      fs.unlinkSync(file);
+    }
+  } catch (error) {
+    throw new Error("image not found!");
   }
 }
